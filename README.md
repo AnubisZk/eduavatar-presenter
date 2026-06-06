@@ -104,6 +104,40 @@ Current placeholders:
 - PPTX processing extracts slide text and creates placeholder slide images.
 - PDF processing uses `pdf2image` when Poppler is available and falls back to a placeholder slide.
 
+## Avatar Provider Configuration
+
+Avatar generation is provider-based. The default is:
+
+```bash
+AVATAR_PROVIDER=placeholder
+```
+
+Available provider names:
+
+- `placeholder`: static avatar card video, works with FFmpeg.
+- `wav2lip`: scaffold for future Wav2Lip integration.
+- `sadtalker`: scaffold for future SadTalker integration.
+- `musetalk`: scaffold for future MuseTalk integration.
+- `api`: scaffold for a future remote GPU worker or avatar API.
+
+For a remote GPU worker later, configure:
+
+```bash
+AVATAR_PROVIDER=api
+AVATAR_API_URL=https://your-avatar-worker.example.com
+```
+
+The provider contract is:
+
+```python
+generate(project_id, avatar_source_path, audio_path) -> {
+  "path": "...",
+  "url": "...",
+  "duration_seconds": 5.0,
+  "provider": "..."
+}
+```
+
 ## Future AI Integrations
 
 Replace the placeholder services with consent-aware integrations such as:
