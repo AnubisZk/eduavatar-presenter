@@ -1,0 +1,8 @@
+# Railway deploy configuration when the repository root is selected.
+[build]
+  builder = "DOCKERFILE"
+  dockerfilePath = "Dockerfile"
+
+[deploy]
+  healthcheckPath = "/health"
+  healthcheckTimeout = 120
