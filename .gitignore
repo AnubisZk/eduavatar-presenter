@@ -1,0 +1,21 @@
+# Python runtime artifacts.
+__pycache__/
+*.pyc
+.venv/
+backend/tmp/
+
+# Frontend dependency and build artifacts.
+node_modules/
+dist/
+
+# Generated media should stay local except for folder placeholders.
+backend/app/storage/uploads/*
+backend/app/storage/slides/*
+backend/app/storage/audio/*
+backend/app/storage/avatars/*
+backend/app/storage/outputs/*
+!backend/app/storage/uploads/.gitkeep
+!backend/app/storage/slides/.gitkeep
+!backend/app/storage/audio/.gitkeep
+!backend/app/storage/avatars/.gitkeep
+!backend/app/storage/outputs/.gitkeep

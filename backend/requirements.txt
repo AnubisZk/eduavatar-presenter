@@ -1,0 +1,12 @@
+# FastAPI server and multipart upload handling.
+fastapi>=0.115.6
+uvicorn[standard]>=0.34.0
+python-multipart>=0.0.20
+
+# Presentation and image processing.
+python-pptx>=1.0.2
+pdf2image>=1.17.0
+Pillow>=12.0.0
+
+# Validation models.
+pydantic>=2.10.5

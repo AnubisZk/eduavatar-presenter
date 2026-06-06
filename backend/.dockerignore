@@ -1,0 +1,15 @@
+# Keep local and generated files out of the Railway Docker image.
+.venv/
+__pycache__/
+*.pyc
+tmp/
+app/storage/uploads/*
+app/storage/slides/*
+app/storage/audio/*
+app/storage/avatars/*
+app/storage/outputs/*
+!app/storage/uploads/.gitkeep
+!app/storage/slides/.gitkeep
+!app/storage/audio/.gitkeep
+!app/storage/avatars/.gitkeep
+!app/storage/outputs/.gitkeep

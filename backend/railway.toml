@@ -1,0 +1,8 @@
+# Railway deploy configuration for the FastAPI backend.
+[build]
+  builder = "DOCKERFILE"
+  dockerfilePath = "Dockerfile"
+
+[deploy]
+  healthcheckPath = "/health"
+  healthcheckTimeout = 120
