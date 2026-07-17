@@ -98,6 +98,7 @@ export default function CreatePage({ studio, setStudio, setActivePage }) {
         project_id: uploaded.project_id,
         avatar_source_path: uploaded.file_paths.avatar,
         audio_files: voice.audio_files.map((item) => item.path),
+        provider: "animated",
       });
       updateStudio({
         voiceResult: voice,
