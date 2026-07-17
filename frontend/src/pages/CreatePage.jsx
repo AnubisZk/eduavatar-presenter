@@ -17,6 +17,7 @@ export default function CreatePage({ studio, setStudio, setActivePage }) {
     files,
     script,
     targetLanguage,
+    voiceProvider,
     uploadResult,
     scriptResult,
     voiceResult,
@@ -81,14 +82,18 @@ export default function CreatePage({ studio, setStudio, setActivePage }) {
     try {
       const uploaded = await uploadIfReady();
       const sectioned = scriptResult || (await handleScript());
-      updateStudio({ status: "Generating placeholder narration audio...", statusType: "loading" });
+      updateStudio({
+        status: voiceProvider === "xtts" ? "Cloning the uploaded voice and generating narration..." : "Generating natural narration audio...",
+        statusType: "loading",
+      });
       const voice = await generateVoice({
         project_id: uploaded.project_id,
         script_sections: sectioned.sections,
         target_language: targetLanguage,
         voice_sample_path: uploaded.file_paths.voice,
+        provider: voiceProvider,
       });
-      updateStudio({ voiceResult: voice, status: "Generating placeholder avatar clips...", statusType: "loading" });
+      updateStudio({ voiceResult: voice, status: "Generating lip-synced moving avatar clips...", statusType: "loading" });
       const avatar = await generateAvatar({
         project_id: uploaded.project_id,
         avatar_source_path: uploaded.file_paths.avatar,
@@ -180,13 +185,34 @@ export default function CreatePage({ studio, setStudio, setActivePage }) {
           />
         )}
         {currentStep === 3 && (
-          <FileInput
-            label="Upload voice sample with consent"
-            accept=".wav,.mp3"
-            value={files.voice}
-            onChange={(file) => updateFiles({ voice: file })}
-            helper="Accepted formats: WAV, MP3"
-          />
+          <div className="space-y-5">
+            <FileInput
+              label="Upload voice sample with consent (reference)"
+              accept=".wav,.mp3"
+              value={files.voice}
+              onChange={(file) => updateFiles({ voice: file })}
+              helper="Use 6-30 seconds of clear speech with little background noise. Accepted formats: WAV, MP3."
+            />
+            <label className="block max-w-xl">
+              <span className="text-sm font-medium text-slate-800">Narration voice</span>
+              <select
+                className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2 outline-none focus:border-blue-600"
+                value={voiceProvider}
+                onChange={(event) => updateStudio({
+                  voiceProvider: event.target.value,
+                  voiceResult: null,
+                  avatarResult: null,
+                  outputResult: null,
+                })}
+              >
+                <option value="edge">Standard neural voice (fast)</option>
+                <option value="xtts">Clone the uploaded voice with XTTS</option>
+              </select>
+              <span className="mt-2 block text-xs leading-5 text-slate-500">
+                Voice cloning requires the XTTS model on the backend and permission from the speaker.
+              </span>
+            </label>
+          </div>
         )}
         {currentStep === 4 && (
           <FileInput
@@ -221,7 +247,9 @@ export default function CreatePage({ studio, setStudio, setActivePage }) {
         )}
         {currentStep === 7 && (
           <div className="space-y-4">
-            <p className="text-slate-600">Generate placeholder voice and avatar clips for preview.</p>
+            <p className="text-slate-600">
+              Generate {voiceProvider === "xtts" ? "narration in the uploaded voice" : "natural narration"} and a moving, lip-synced avatar preview.
+            </p>
             <button
               onClick={handleGeneratePreview}
               className="inline-flex items-center gap-2 rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"

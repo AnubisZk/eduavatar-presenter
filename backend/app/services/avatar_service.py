@@ -7,7 +7,7 @@ from app.services.avatar_providers import PROVIDERS
 
 def selected_avatar_provider_name() -> str:
     """Return the configured avatar provider name."""
-    return os.getenv("AVATAR_PROVIDER", "placeholder").strip().lower() or "placeholder"
+    return os.getenv("AVATAR_PROVIDER", "animated").strip().lower() or "animated"
 
 
 def get_avatar_provider():
@@ -23,9 +23,9 @@ def get_avatar_provider():
 def generate_avatar_video(project_id: str, avatar_source_path: str, audio_path: str) -> dict:
     """Generate one avatar clip using the configured provider.
 
-    Set AVATAR_PROVIDER to placeholder, wav2lip, sadtalker, musetalk, or api.
-    Real model providers are scaffolded so they can be connected without changing
-    frontend calls, render routes, or project storage conventions.
+    Set AVATAR_PROVIDER to animated, placeholder, wav2lip, sadtalker, musetalk,
+    or api. The animated provider works locally on CPU; Wav2Lip and SadTalker use
+    separately installed model checkouts.
     """
     provider = get_avatar_provider()
     return provider.generate(project_id, avatar_source_path, audio_path)

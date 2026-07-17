@@ -1,5 +1,6 @@
 """Avatar provider package for swappable talking-avatar backends."""
 
+from app.services.avatar_providers.animated_2d_provider import Animated2DAvatarProvider
 from app.services.avatar_providers.external_provider import (
     ApiAvatarProvider,
     MuseTalkProvider,
@@ -10,6 +11,8 @@ from app.services.avatar_providers.placeholder_provider import PlaceholderAvatar
 
 
 PROVIDERS = {
+    "animated": Animated2DAvatarProvider,
+    "animated_2d": Animated2DAvatarProvider,
     "placeholder": PlaceholderAvatarProvider,
     "wav2lip": Wav2LipProvider,
     "sadtalker": SadTalkerProvider,

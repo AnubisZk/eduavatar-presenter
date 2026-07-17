@@ -1,4 +1,4 @@
-"""Voice generation route backed by a placeholder TTS service."""
+"""Voice generation route backed by the configured TTS service."""
 
 from typing import List
 
@@ -12,12 +12,13 @@ router = APIRouter(prefix="/voice", tags=["voice"])
 
 
 class VoiceRequest(BaseModel):
-    """Request body for placeholder voice generation."""
+    """Request body for slide narration generation."""
 
     project_id: str
     script_sections: List[ScriptSection]
     target_language: str
     voice_sample_path: str
+    provider: str | None = None
 
 
 @router.post("/generate")
@@ -28,5 +29,11 @@ def generate_voice_route(payload: VoiceRequest):
         script_sections=payload.script_sections,
         target_language=payload.target_language,
         voice_sample_path=payload.voice_sample_path,
+        provider_name=payload.provider,
     )
-    return {"project_id": payload.project_id, "status": "voice_generated", "audio_files": audio_files}
+    return {
+        "project_id": payload.project_id,
+        "status": "voice_generated",
+        "provider": audio_files[0]["provider"] if audio_files else payload.provider,
+        "audio_files": audio_files,
+    }
