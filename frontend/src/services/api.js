@@ -56,6 +56,10 @@ export async function createScriptSections(payload) {
   );
 }
 
+export async function getVoiceProviders() {
+  return parseResponse(await apiFetch("/voice/providers", { method: "GET" }));
+}
+
 export async function generateVoice(payload) {
   // The selected voice provider returns one narration file per slide.
   return parseResponse(
