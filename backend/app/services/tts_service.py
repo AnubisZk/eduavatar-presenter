@@ -1,6 +1,7 @@
 """Natural and cloned text-to-speech providers for presentation narration."""
 
 import asyncio
+import importlib.util
 import os
 import subprocess
 import threading
@@ -65,6 +66,27 @@ def selected_tts_provider_name() -> str:
     return os.getenv("TTS_PROVIDER", "edge").strip().lower() or "edge"
 
 
+def voice_provider_capabilities() -> dict:
+    """Describe providers that can run in the current backend process."""
+    xtts_available = all(importlib.util.find_spec(module) is not None for module in ("torch", "TTS"))
+    xtts_reason = ""
+    if not xtts_available:
+        xtts_reason = (
+            "Uploaded-voice cloning is not enabled on this backend. "
+            "Install a compatible PyTorch build and backend/requirements-xtts.txt, "
+            "or select the standard neural voice."
+        )
+    return {
+        "edge": {"available": True, "label": "Standard neural voice"},
+        "xtts": {
+            "available": xtts_available,
+            "label": "Uploaded voice clone with XTTS",
+            "reason": xtts_reason,
+        },
+        "placeholder": {"available": True, "label": "Silent pipeline test"},
+    }
+
+
 async def _write_edge_speech(path: Path, text: str, voice: str) -> None:
     """Generate one spoken narration file with Edge TTS."""
     try:
@@ -127,8 +149,8 @@ def _get_xtts_engine():
         from TTS.api import TTS
     except ImportError as error:
         raise RuntimeError(
-            "TTS_PROVIDER=xtts requires PyTorch and coqui-tts. Install backend/requirements-xtts.txt "
-            "after choosing the correct CPU or CUDA PyTorch build."
+            "Uploaded-voice cloning is not enabled on this backend. Install a compatible PyTorch build "
+            "and backend/requirements-xtts.txt, or select the standard neural voice."
         ) from error
 
     configured_device = os.getenv("XTTS_DEVICE", "").strip().lower()

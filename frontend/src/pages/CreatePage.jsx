@@ -1,16 +1,25 @@
 // Eight-step creation wizard that collects consent, media, script, language, preview, and export intent.
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Download, Play, Wand2 } from "lucide-react";
 
 import FileInput from "../components/FileInput.jsx";
 import StatusMessage from "../components/StatusMessage.jsx";
 import StepIndicator from "../components/StepIndicator.jsx";
-import { createScriptSections, generateAvatar, generateVoice, renderFinal, uploadProject } from "../services/api.js";
+import {
+  createScriptSections,
+  generateAvatar,
+  generateVoice,
+  getVoiceProviders,
+  renderFinal,
+  uploadProject,
+} from "../services/api.js";
 
 const steps = ["Consent", "Photo/video", "Voice", "Slides", "Script", "Language", "Preview", "Export"];
 
 const languages = ["English", "Turkish", "German", "French", "Spanish", "Italian", "Arabic"];
 
 export default function CreatePage({ studio, setStudio, setActivePage }) {
+  const [voiceProviders, setVoiceProviders] = useState(null);
   const {
     currentStep,
     consent,
@@ -30,6 +39,33 @@ export default function CreatePage({ studio, setStudio, setActivePage }) {
   const updateStudio = (patch) => setStudio((previous) => ({ ...previous, ...patch }));
   const updateConsent = (patch) => updateStudio({ consent: { ...consent, ...patch } });
   const updateFiles = (patch) => updateStudio({ files: { ...files, ...patch } });
+  const xttsCapability = voiceProviders?.providers?.xtts;
+  const xttsUnavailable = !xttsCapability || xttsCapability.available === false;
+
+  useEffect(() => {
+    let active = true;
+    getVoiceProviders()
+      .then((result) => {
+        if (active) setVoiceProviders(result);
+      })
+      .catch(() => {
+        if (active) setVoiceProviders({ providers: { xtts: { available: false, reason: "Voice provider status is unavailable." } } });
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (voiceProvider === "xtts" && xttsCapability?.available === false) {
+      setStudio((previous) => ({
+        ...previous,
+        voiceProvider: "edge",
+        status: xttsCapability.reason,
+        statusType: "error",
+      }));
+    }
+  }, [setStudio, voiceProvider, xttsCapability]);
 
   const canContinueConsent =
     consent.userName.trim() &&
@@ -207,10 +243,14 @@ export default function CreatePage({ studio, setStudio, setActivePage }) {
                 })}
               >
                 <option value="edge">Standard neural voice (fast)</option>
-                <option value="xtts">Clone the uploaded voice with XTTS</option>
+                <option value="xtts" disabled={xttsUnavailable}>
+                  Clone the uploaded voice with XTTS{xttsUnavailable ? " (not enabled)" : ""}
+                </option>
               </select>
               <span className="mt-2 block text-xs leading-5 text-slate-500">
-                Voice cloning requires the XTTS model on the backend and permission from the speaker.
+                {xttsUnavailable
+                  ? xttsCapability?.reason || "Checking whether voice cloning is available..."
+                  : "Voice cloning uses the uploaded reference and requires permission from the speaker."}
               </span>
             </label>
           </div>
