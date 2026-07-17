@@ -15,6 +15,16 @@ async function parseResponse(response) {
   return data;
 }
 
+async function apiFetch(path, options) {
+  try {
+    return await fetch(`${API_BASE_URL}${path}`, options);
+  } catch {
+    throw new Error(
+      `The presentation backend could not be reached at ${API_BASE_URL}. Check the deployment and try again.`
+    );
+  }
+}
+
 export async function uploadProject({ consent, files }) {
   // Consent and files are sent together because uploads are blocked until all confirmations are true.
   const formData = new FormData();
@@ -28,7 +38,7 @@ export async function uploadProject({ consent, files }) {
   formData.append("presentation_file", files.presentation);
 
   return parseResponse(
-    await fetch(`${API_BASE_URL}/upload`, {
+    await apiFetch("/upload", {
       method: "POST",
       body: formData,
     })
@@ -38,7 +48,7 @@ export async function uploadProject({ consent, files }) {
 export async function createScriptSections(payload) {
   // This endpoint divides a manual script into slide-level narration chunks.
   return parseResponse(
-    await fetch(`${API_BASE_URL}/presentation/script`, {
+    await apiFetch("/presentation/script", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -47,9 +57,9 @@ export async function createScriptSections(payload) {
 }
 
 export async function generateVoice(payload) {
-  // Placeholder TTS returns one silent WAV per slide.
+  // The selected voice provider returns one narration file per slide.
   return parseResponse(
-    await fetch(`${API_BASE_URL}/voice/generate`, {
+    await apiFetch("/voice/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -58,9 +68,9 @@ export async function generateVoice(payload) {
 }
 
 export async function generateAvatar(payload) {
-  // Placeholder avatar generation returns one short clip or image preview per slide.
+  // The selected avatar provider returns one synchronized clip per slide.
   return parseResponse(
-    await fetch(`${API_BASE_URL}/avatar/generate`, {
+    await apiFetch("/avatar/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -71,7 +81,7 @@ export async function generateAvatar(payload) {
 export async function renderFinal(payload) {
   // Final render composes slides, avatar clips, narration audio, and optional subtitles.
   return parseResponse(
-    await fetch(`${API_BASE_URL}/render/final`, {
+    await apiFetch("/render/final", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

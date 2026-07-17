@@ -89,6 +89,8 @@ The Netlify frontend needs a separately deployed backend for uploads, speech, av
 3. Set `VITE_API_BASE_URL=https://YOUR-BACKEND.up.railway.app` on Netlify.
 4. Redeploy Netlify so Vite embeds the backend URL in the production build.
 
+The backend also accepts Netlify deploy-preview origins matching `https://*--eduavatar-presenter.netlify.app` through its CORS origin pattern, so pull-request previews can exercise the real API.
+
 Generated media is stored on the backend filesystem. Use a Railway volume or object storage before relying on persistent project history.
 
 ## Docker Compose
