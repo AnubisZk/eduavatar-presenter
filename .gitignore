@@ -20,3 +20,6 @@ backend/app/storage/outputs/*
 !backend/app/storage/audio/.gitkeep
 !backend/app/storage/avatars/.gitkeep
 !backend/app/storage/outputs/.gitkeep
+
+# Local Netlify folder
+.netlify

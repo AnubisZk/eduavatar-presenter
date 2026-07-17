@@ -12,7 +12,7 @@ router = APIRouter(prefix="/avatar", tags=["avatar"])
 
 
 class AvatarRequest(BaseModel):
-    """Request body for placeholder talking avatar generation."""
+    """Request body for lip-synced talking avatar generation."""
 
     project_id: str
     avatar_source_path: str

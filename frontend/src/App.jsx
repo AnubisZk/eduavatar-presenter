@@ -23,6 +23,7 @@ const initialStudio = {
   },
   script: "",
   targetLanguage: "English",
+  voiceProvider: "edge",
   uploadResult: null,
   scriptResult: null,
   voiceResult: null,

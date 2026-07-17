@@ -3,7 +3,7 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# FFmpeg is required for avatar placeholders and final MP4 rendering.
+# FFmpeg is required for lip-synced avatar clips and final MP4 rendering.
 RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg poppler-utils && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

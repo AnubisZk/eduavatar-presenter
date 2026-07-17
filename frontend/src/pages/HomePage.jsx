@@ -38,7 +38,7 @@ export default function HomePage({ setActivePage }) {
           {[
             [ShieldCheck, "Consent is required before uploads."],
             [Languages, "Scripts can be organized by slide and language."],
-            [BadgeCheck, "AI modules are clean placeholders ready to replace."],
+            [BadgeCheck, "CPU-friendly lip sync works locally; SadTalker and Wav2Lip can be connected for higher realism."],
           ].map(([Icon, text]) => (
             <div className="flex items-center gap-3 text-sm text-slate-700" key={text}>
               <Icon className="text-blue-700" size={18} />
